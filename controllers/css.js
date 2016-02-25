@@ -28,26 +28,6 @@ exports.run = function(req, res, cb) {
 	var srcPath,
 	    parsed;
 
-	// SCSS importer function, see https://www.npmjs.com/package/node-sass#importer--v200---experimental for more information
-	function scssImporter(url, prev, done) {
-		var orgParsed = path.parse(req.urlParsed.pathname),
-		    urlParsed = path.parse(url),
-		    srcPath   = router.fileExists('public' + orgParsed.dir + '/' + url + '.scss');
-
-		// Trying with underscore files instead
-		if ( ! srcPath) {
-			srcPath = router.fileExists('public' + orgParsed.dir + '/' + urlParsed.dir + '/_' + urlParsed.name + '.scss');
-		}
-
-
-		if (srcPath) {
-			done({'file': srcPath});
-		} else {
-			log.warn('larvitcss: controllers/css.js: scssImporter() - Could not resolve url "' + url + '"');
-			done({'content': ''});
-		}
-	}
-
 	// Serve cached version
 	if (compiledCss[req.urlParsed.pathname] !== undefined) {
 		log.debug('larvitcss: controllers/css.js: "' + req.urlParsed.pathname + ' found in cache, serving directly!');
@@ -71,7 +51,7 @@ exports.run = function(req, res, cb) {
 
 	log.debug('larvitcss: controllers/css.js: resolved "' + req.urlParsed.pathname + '" to "' + srcPath + '", compile!');
 
-	sass.render({'file': srcPath, 'outputStyle': 'compressed', 'importer': scssImporter}, function(err, result) {
+	sass.render({'file': srcPath, 'outputStyle': 'compressed'}, function(err, result) {
 		if (err) {
 			log.warn('larvitcss: controllers/css.js: Could not render ' + srcPath + ' err: ' + err.message);
 			result = {'css': new Buffer([])};
