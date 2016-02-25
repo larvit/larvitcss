@@ -1,0 +1,35 @@
+{
+  "name": "larvitcss",
+  "version": "0.1.0",
+  "description": "Used to compile, minify, autoprefix etc CSS to remove the need to precompile css",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/larvit/larvitcss.git"
+  },
+  "keywords": [
+    "css",
+    "compile",
+    "autocompile"
+  ],
+  "author": {
+    "name": "lilleman",
+    "email": "lilleman@larvit.se"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/larvit/larvitcss/issues"
+  },
+  "homepage": "https://github.com/larvit/larvitcss#readme",
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "autoprefixer": "^6.3.3",
+    "larvitrouter": "^0.1.15",
+    "node-sass": "^3.4.2",
+    "postcss": "^5.0.16",
+    "winston": "^2.1.1"
+  }
+}
