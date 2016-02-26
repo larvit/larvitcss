@@ -45,7 +45,15 @@ exports.run = function(req, res, cb) {
 
 	// No suitable sources found, show 404
 	if ( ! srcPath) {
-		require(router.fileExists('controllers/404.js')).run(req, res, cb);
+		let notFoundPath = router.fileExists('controllers/404.js');
+
+		if (notFoundPath) {
+			require(notFoundPath).run(req, res, cb);
+		} else {
+			res.statusCode = 404;
+			res.end('File not found');
+		}
+
 		return;
 	}
 
