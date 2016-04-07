@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/larvit/larvitcss.svg?branch=master)](https://travis-ci.org/larvit/larvitcss) [![Dependencies](https://david-dm.org/larvit/larvitcss.svg)](https://david-dm.org/larvit/larvitcss.svg)
+
 # larvitcss
 
 Compile, minify, autoprefix etc css from a folder. This module is designed to remove the need to precomile css.
