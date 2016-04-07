@@ -3,9 +3,9 @@
 const autoprefixer = require('autoprefixer'),
       compiledCss  = {},
       postcss      = require('postcss'),
-      router       = require('larvitrouter')(),
       path         = require('path'),
       sass         = require('node-sass'),
+      lfs          = require('larvitfs'),
       log          = require('winston');
 
 function serveCss(compiled, req, res) {
@@ -35,17 +35,17 @@ exports.run = function(req, res, cb) {
 		return;
 	}
 
-	srcPath = router.fileExists('public' + req.urlParsed.pathname);
+	srcPath = lfs.getPathSync('public' + req.urlParsed.pathname);
 
 	// The original requested file was not found, look for a scss one to compile
 	if ( ! srcPath) {
 		parsed  = path.parse(req.urlParsed.pathname);
-		srcPath = router.fileExists('public' + parsed.dir + '/' + parsed.name + '.scss');
+		srcPath = lfs.getPathSync('public' + parsed.dir + '/' + parsed.name + '.scss');
 	}
 
 	// No suitable sources found, show 404
 	if ( ! srcPath) {
-		let notFoundPath = router.fileExists('controllers/404.js');
+		let notFoundPath = lfs.getPathSync('controllers/404.js');
 
 		if (notFoundPath) {
 			require(notFoundPath).run(req, res, cb);

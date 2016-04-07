@@ -1,6 +1,6 @@
 {
   "name": "larvitcss",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Used to compile, minify, autoprefix etc CSS to remove the need to precompile css",
   "main": "index.js",
   "scripts": {
@@ -16,8 +16,9 @@
     "autocompile"
   ],
   "author": {
-    "name": "lilleman",
-    "email": "lilleman@larvit.se"
+    "name": "Mikael 'Lilleman' Göransson",
+    "email": "lilleman@larvit.se",
+    "url": "http://github.com/larvit/larvitcss"
   },
   "license": "MIT",
   "bugs": {
@@ -27,9 +28,38 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "autoprefixer": "^6.3.3",
-    "larvitrouter": "^0.1.15",
+    "larvitfs": "^1.0.0",
     "node-sass": "^3.4.2",
     "postcss": "^5.0.16",
     "winston": "^2.1.1"
+  },
+  "private": false,
+  "contributors": [],
+  "devDependencies": {
+    "eslint": "^2.7.0",
+    "freeport": "^1.0.5",
+    "larvitbase": "^1.0.0-rc1",
+    "mocha": "^2.4.5",
+    "pre-git": "^3.8.3"
+  },
+  "pre-commit": [
+    "npm test",
+    "eslint ./"
+  ],
+  "maintainers": [
+    {
+      "name": "lilleman",
+      "email": "lilleman@larvit.se"
+    }
+  ],
+  "config": {
+    "pre-git": {
+      "commit-msg": [],
+      "pre-commit": [],
+      "pre-push": [],
+      "post-commit": [],
+      "post-merge": []
+    }
   }
 }
+
