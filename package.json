@@ -38,7 +38,7 @@
   "devDependencies": {
     "eslint": "^2.7.0",
     "freeport": "^1.0.5",
-    "larvitbase": "^1.0.0-rc1",
+    "larvitbase": "^1.0.0",
     "mocha": "^2.4.5",
     "pre-git": "^3.8.3"
   },
