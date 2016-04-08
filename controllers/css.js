@@ -25,7 +25,7 @@ function autoprefix(compiled, req, res) {
 }
 
 exports.run = function(req, res, cb) {
-	var srcPath,
+	let srcPath,
 	    parsed;
 
 	// Serve cached version
@@ -35,16 +35,18 @@ exports.run = function(req, res, cb) {
 		return;
 	}
 
-	srcPath = lfs.getPathSync('public' + req.urlParsed.pathname);
+	parsed  = path.parse(req.urlParsed.pathname);
 
-	// The original requested file was not found, look for a scss one to compile
-	if ( ! srcPath) {
-		parsed  = path.parse(req.urlParsed.pathname);
-		srcPath = lfs.getPathSync('public' + parsed.dir + '/' + parsed.name + '.scss');
+	// Check for scss first
+	srcPath = lfs.getPathSync('public' + parsed.dir + '/' + parsed.name + '.scss');
+
+	// If scss does not exist, check if pre compiled css exists
+	if (srcPath === false) {
+		srcPath = lfs.getPathSync('public' + req.urlParsed.pathname);
 	}
 
 	// No suitable sources found, show 404
-	if ( ! srcPath) {
+	if (srcPath === false) {
 		let notFoundPath = lfs.getPathSync('controllers/404.js');
 
 		if (notFoundPath) {

@@ -4,6 +4,8 @@
 
 Compile, minify, autoprefix etc css from a folder. This module is designed to remove the need to precomile css.
 
+Uncompiled files, like .scss, .sass, .less, .stylus etc overrides precompiled .css files with a conflicting name.
+
 ## Installation
 
 ```bash

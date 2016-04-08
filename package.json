@@ -1,6 +1,6 @@
 {
   "name": "larvitcss",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Used to compile, minify, autoprefix etc CSS to remove the need to precompile css",
   "main": "index.js",
   "scripts": {
@@ -40,7 +40,8 @@
     "freeport": "^1.0.5",
     "larvitbase": "^1.0.0",
     "mocha": "^2.4.5",
-    "pre-git": "^3.8.3"
+    "pre-git": "^3.8.3",
+    "request": "^2.70.0"
   },
   "pre-commit": [
     "npm test",
@@ -62,4 +63,3 @@
     }
   }
 }
-

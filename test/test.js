@@ -1,8 +1,8 @@
 'use strict';
 
-const assert = require('assert'),
-      http   = require('http'),
-      log    = require('winston');
+const request = require('request'),
+      assert  = require('assert'),
+      log     = require('winston');
 
 let port;
 
@@ -38,57 +38,42 @@ before(function(done) {
 
 describe('Basics', function() {
 	it('Test a basic, single SCSS file', function(done) {
-		const req = http.request({'port': port, 'path': '/test/foo.css'}, function(res) {
+		request('http://localhost:' + port + '/test/foo.css', function(err, res, body) {
+			assert( ! err, 'err must be negative');
 			assert.deepEqual(res.statusCode, 200);
 			assert.deepEqual(res.headers['content-type'], 'text/css');
-			res.setEncoding('utf8');
-			res.on('data', function(chunk) {
-				assert.deepEqual(chunk, 'body{font:100% Helvetica,sans-serif;color:#333}\n');
-			});
-			res.on('end', function() {
-				done();
-			});
+			assert.deepEqual(body, 'body{font:100% Helvetica,sans-serif;color:#333}\n');
+			done();
 		});
-
-		req.end();
 	});
 
 	it('Get the source for that SCSS file', function(done) {
-		const req = http.request({'port': port, 'path': '/test/foo.scss'}, function(res) {
+		request('http://localhost:' + port + '/test/foo.scss', function(err, res, body) {
+			assert( ! err, 'err must be negative');
 			assert.deepEqual(res.statusCode, 200);
 			assert.deepEqual(res.headers['content-type'], 'text/x-scss; charset=UTF-8');
-			res.setEncoding('utf8');
-			res.on('data', function(chunk) {
-				assert.deepEqual(chunk, `$font-stack:    Helvetica, sans-serif;
-$primary-color: #333;
-
-body {
-  font: 100% $font-stack;
-  color: $primary-color;
-}`);
-			});
-			res.on('end', function() {
-				done();
-			});
+			assert.deepEqual(body, '$font-stack:    Helvetica, sans-serif;\n$primary-color: #333;\n\nbody {\n  font: 100% $font-stack;\n  color: $primary-color;\n}');
+			done();
 		});
-
-		req.end();
 	});
 
 	it('Get nested SCSS files', function(done) {
-		const req = http.request({'port': port, 'path': '/test/nested.css'}, function(res) {
+		request('http://localhost:' + port + '/test/nested.css', function(err, res, body) {
+			assert( ! err, 'err must be negative');
 			assert.deepEqual(res.statusCode, 200);
 			assert.deepEqual(res.headers['content-type'], 'text/css');
-			res.setEncoding('utf8');
-			res.on('data', function(chunk) {
-				assert.deepEqual(chunk, 'a{color:#f00}body{background:#0f0}\n');
-			});
-			res.on('end', function() {
-				done();
-			});
+			assert.deepEqual(body, 'a{color:#f00}body{background:#0f0}\n');
+			done();
 		});
-
-		req.end();
 	});
+});
 
+describe('Special rules', function() {
+	it('Get uncompiled pre-css before compiled css', function(done) {
+		request('http://localhost:' + port + '/test/blubb.css', function(err, res, body) {
+			assert( ! err, 'err must be negative');
+			assert.deepEqual(body, 'a{font-decoration:none}\n');
+			done();
+		});
+	});
 });
