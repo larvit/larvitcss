@@ -1,6 +1,6 @@
 {
   "name": "larvitcss",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "Used to compile, minify, autoprefix etc CSS to remove the need to precompile css",
   "main": "index.js",
   "scripts": {
@@ -27,39 +27,25 @@
   "homepage": "https://github.com/larvit/larvitcss#readme",
   "readmeFilename": "README.md",
   "dependencies": {
-    "autoprefixer": "^6.3.3",
+    "autoprefixer": "^7.1.1",
     "larvitfs": "^1.0.0",
-    "node-sass": "^3.4.2",
-    "postcss": "^5.0.16",
+    "node-sass": "^4.5.3",
+    "postcss": "^6.0.1",
     "winston": "^2.1.1"
   },
   "private": false,
   "contributors": [],
   "devDependencies": {
-    "eslint": "^2.7.0",
+    "eslint": "^3.19.0",
     "freeport": "^1.0.5",
     "larvitbase": "^1.0.0",
-    "mocha": "^2.4.5",
-    "pre-git": "^3.8.3",
+    "mocha": "^3.4.2",
     "request": "^2.70.0"
   },
-  "pre-commit": [
-    "npm test",
-    "eslint ./"
-  ],
   "maintainers": [
     {
       "name": "lilleman",
       "email": "lilleman@larvit.se"
     }
-  ],
-  "config": {
-    "pre-git": {
-      "commit-msg": [],
-      "pre-commit": [],
-      "pre-push": [],
-      "post-commit": [],
-      "post-merge": []
-    }
-  }
+  ]
 }
