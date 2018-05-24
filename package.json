@@ -1,10 +1,10 @@
 {
   "name": "larvitcss",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Used to compile, minify, autoprefix etc CSS to remove the need to precompile css",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --exit"
   },
   "repository": {
     "type": "git",
@@ -27,8 +27,8 @@
   "homepage": "https://github.com/larvit/larvitcss#readme",
   "readmeFilename": "README.md",
   "dependencies": {
-    "autoprefixer": "^7.1.1",
-    "larvitfs": "^1.0.0",
+    "autoprefixer": "^8.5.0",
+    "larvitfs": "^2.0.4",
     "node-sass": "^4.5.3",
     "postcss": "^6.0.1",
     "winston": "^2.1.1"
@@ -36,11 +36,11 @@
   "private": false,
   "contributors": [],
   "devDependencies": {
-    "eslint": "^3.19.0",
+    "eslint": "^4.19.1",
     "freeport": "^1.0.5",
     "larvitbase": "^1.0.0",
-    "mocha": "^3.4.2",
-    "request": "^2.70.0"
+    "mocha": "^5.2.0",
+    "request": "^2.87.0"
   },
   "maintainers": [
     {

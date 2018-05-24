@@ -1,12 +1,13 @@
 'use strict';
 
 const autoprefixer = require('autoprefixer'),
-      compiledCss  = {},
-      postcss      = require('postcss'),
-      path         = require('path'),
-      sass         = require('node-sass'),
-      lfs          = require('larvitfs'),
-      log          = require('winston');
+	compiledCss  = {},
+	postcss      = require('postcss'),
+	path         = require('path'),
+	sass         = require('node-sass'),
+	Lfs          = require('larvitfs'),
+	lfs			 = new Lfs(),
+	log          = require('winston');
 
 function serveCss(compiled, req, res) {
 	res.setHeader('Last-Modified', compiled.lastModified);
