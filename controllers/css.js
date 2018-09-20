@@ -1,12 +1,12 @@
 'use strict';
 
-const autoprefixer = require('autoprefixer'),
+const	autoprefixer = require('autoprefixer'),
 	compiledCss  = {},
 	postcss      = require('postcss'),
 	path         = require('path'),
 	sass         = require('node-sass'),
 	Lfs          = require('larvitfs'),
-	lfs			 = new Lfs(),
+	lfs          = new Lfs(),
 	log          = require('winston');
 
 function serveCss(compiled, req, res) {
@@ -30,13 +30,13 @@ exports.run = function(req, res, cb) {
 	    parsed;
 
 	// Serve cached version
-	if (compiledCss[req.urlParsed.pathname] !== undefined) {
+	if (compiledCss[req.urlParsed.pathname] !== undefined && process.env.NODE_ENV !== 'development') {
 		log.debug('larvitcss: controllers/css.js: "' + req.urlParsed.pathname + ' found in cache, serving directly!');
 		autoprefix(compiledCss[req.urlParsed.pathname], req, res);
 		return;
 	}
 
-	parsed  = path.parse(req.urlParsed.pathname);
+	parsed = path.parse(req.urlParsed.pathname);
 
 	// Check for scss first
 	srcPath = lfs.getPathSync('public' + parsed.dir + '/' + parsed.name + '.scss');

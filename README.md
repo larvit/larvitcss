@@ -26,3 +26,7 @@ require('larvitbase')({
 	}]
 });
 ```
+
+## Development mode
+
+Set environment variable NODE_ENV to "development" to disable cache
