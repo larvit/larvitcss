@@ -74,6 +74,14 @@ test('Get uncompiled pre-css before compiled css', function (t) {
 	});
 });
 
+test('Get broken css returns css', function (t) {
+	request('http://localhost:' + port + '/test/broken.css', function (err, res, body) {
+		if (err) throw err;
+		t.deepEqual(body, '.test { font;\n');
+		t.end();
+	});
+});
+
 test('Stop webserver', function (t) {
 	app.stop(t.end);
 });

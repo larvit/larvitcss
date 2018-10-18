@@ -7,6 +7,7 @@ const path         = require('path');
 const sass         = require('node-sass');
 const Lfs          = require('larvitfs');
 const lfs          = new Lfs();
+const fs           = require('fs');
 
 function serveCss(compiled, req, res) {
 	res.setHeader('Last-Modified', compiled.lastModified);
@@ -22,6 +23,15 @@ function autoprefix(compiled, req, res) {
 			});
 			compiled.str = result.css;
 			serveCss(compiled, req, res);
+		})
+		.catch(function (err) {
+			if (err.name === 'CssSyntaxError') {
+				req.log.warn('larvitcss: controllers/css.js: autoprefix() - CSS syntax error, serving original file: ' + err);
+
+				return serveCss(compiled, req, res);
+			}
+
+			throw err;
 		});
 }
 
@@ -66,7 +76,7 @@ module.exports = function (req, res, cb) {
 	sass.render({'file': srcPath, 'outputStyle': 'compressed'}, function (err, result) {
 		if (err) {
 			req.log.warn('larvitcss: controllers/css.js: Could not render ' + srcPath + ' err: ' + err.message);
-			result = {'css': new Buffer([])};
+			result = {'css': fs.readFileSync(srcPath)};
 		}
 
 		compiledCss[req.urlParsed.pathname] = {
