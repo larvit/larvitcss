@@ -16,7 +16,7 @@ function serveCss(compiled, req, res) {
 }
 
 function autoprefix(compiled, req, res) {
-	postcss([autoprefixer]).process(compiled.str)
+	postcss([autoprefixer]).process(compiled.str, { 'from': undefined })
 		.then(function (result) {
 			result.warnings().forEach(function (warn) {
 				req.log.warn('larvitcss: controllers/css.js: autoprefix() - Warning from postcss: ' + warn.toString());
