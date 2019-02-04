@@ -41,7 +41,7 @@ test('Test a basic, single SCSS file', function (t) {
 		if (err) throw err;
 		t.equal(res.statusCode, 200);
 		t.deepEqual(res.headers['content-type'], 'text/css');
-		t.deepEqual(body, 'body{font:100% Helvetica,sans-serif;color:#333}\n');
+		t.deepEqual(body, 'body{font:100% Helvetica,sans-serif;color:#333}');
 		t.end();
 	});
 });
@@ -61,7 +61,7 @@ test('Get nested SCSS files', function (t) {
 		if (err) throw err;
 		t.deepEqual(res.statusCode, 200);
 		t.deepEqual(res.headers['content-type'], 'text/css');
-		t.deepEqual(body, 'a{color:#f00}body{background:#0f0}\n');
+		t.deepEqual(body, 'a{color:red}body{background:lime}');
 		t.end();
 	});
 });
@@ -69,7 +69,7 @@ test('Get nested SCSS files', function (t) {
 test('Get uncompiled pre-css before compiled css', function (t) {
 	request('http://localhost:' + port + '/test/blubb.css', function (err, res, body) {
 		if (err) throw err;
-		t.deepEqual(body, 'a{font-decoration:none}\n');
+		t.deepEqual(body, 'a{font-decoration:none}');
 		t.end();
 	});
 });
