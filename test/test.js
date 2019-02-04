@@ -1,9 +1,9 @@
 'use strict';
 
-const request   = require('request');
-const lUtils    = new (require('larvitutils'))();
-const test  = require('tape');
-const App   = require('larvitbase-www');
+const request = require('request');
+const lUtils = new (require('larvitutils'))();
+const test = require('tape');
+const App = require('larvitbase-www');
 const log = new lUtils.Log('warning');
 
 let app;
@@ -18,12 +18,12 @@ test('Start webserver', function (t) {
 		port = tmpPort;
 
 		app	= new App({
-			'baseOptions': { 'httpOptions':	tmpPort},
-			'log':	log,
-			'routerOptions': {
-				'routes': [{
-					'regex': '\\.css$',
-					'controllerPath': 'css.js'
+			baseOptions: { httpOptions: tmpPort},
+			log: log,
+			routerOptions: {
+				routes: [{
+					regex: '\\.css$',
+					controllerPath: 'css.js'
 				}]
 			}
 		});
