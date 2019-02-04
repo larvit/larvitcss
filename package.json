@@ -28,7 +28,7 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "autoprefixer": "9.1.5",
-    "larvitfs": "2.3.0",
+    "larvitfs": "2.3.1",
     "node-sass": "4.11.0",
     "postcss": "7.0.5"
   },
