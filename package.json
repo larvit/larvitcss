@@ -37,7 +37,7 @@
   "devDependencies": {
     "eslint": "5.6.1",
     "freeport": "1.0.5",
-    "larvitbase-www": "0.5.1",
+    "larvitbase-www": "0.7.3",
     "larvitutils": "2.1.0",
     "tape": "4.9.2",
     "request": "2.88.0"
