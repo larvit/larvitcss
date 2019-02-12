@@ -39,7 +39,7 @@
     "freeport": "1.0.5",
     "larvitbase-www": "0.7.3",
     "larvitutils": "2.1.0",
-    "tape": "4.9.2",
+    "tape": "4.10.0",
     "request": "2.88.0"
   },
   "maintainers": [
