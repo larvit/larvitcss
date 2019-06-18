@@ -8,20 +8,22 @@ const sass         = require('node-sass');
 const Lfs          = require('larvitfs');
 const lfs          = new Lfs();
 
-function serveCss(compiled, req, res) {
+function serveCss(compiled, req, res, cb) {
 	res.setHeader('Last-Modified', compiled.lastModified);
 	res.setHeader('Content-Type', 'text/css');
 	res.end(compiled.str);
+	req.finished = true;
+	cb();
 }
 
-function autoprefix(compiled, req, res) {
+function autoprefix(compiled, req, res, cb) {
 	postcss([autoprefixer]).process(compiled.str)
 		.then(function (result) {
 			result.warnings().forEach(function (warn) {
 				req.log.warn('larvitcss: controllers/css.js: autoprefix() - Warning from postcss: ' + warn.toString());
 			});
 			compiled.str = result.css;
-			serveCss(compiled, req, res);
+			serveCss(compiled, req, res, cb);
 		});
 }
 
@@ -32,7 +34,7 @@ module.exports = function (req, res, cb) {
 	// Serve cached version
 	if (compiledCss[req.urlParsed.pathname] !== undefined && process.env.NODE_ENV !== 'development') {
 		req.log.debug('larvitcss: controllers/css.js: "' + req.urlParsed.pathname + ' found in cache, serving directly!');
-		autoprefix(compiledCss[req.urlParsed.pathname], req, res);
+		autoprefix(compiledCss[req.urlParsed.pathname], req, res, cb);
 
 		return;
 	}
@@ -49,16 +51,11 @@ module.exports = function (req, res, cb) {
 
 	// No suitable sources found, show 404
 	if (srcPath === false) {
-		let notFoundPath = lfs.getPathSync('controllers/404.js');
+		res.statusCode = 404;
+		res.end('File not found');
+		req.finished = true;
 
-		if (notFoundPath) {
-			require(notFoundPath).run(req, res, cb);
-		} else {
-			res.statusCode = 404;
-			res.end('File not found');
-		}
-
-		return;
+		return cb();
 	}
 
 	req.log.debug('larvitcss: controllers/css.js: resolved "' + req.urlParsed.pathname + '" to "' + srcPath + '", compile!');
@@ -73,6 +70,6 @@ module.exports = function (req, res, cb) {
 			'str': result.css.toString(),
 			'lastModified': new Date()
 		};
-		autoprefix(compiledCss[req.urlParsed.pathname], req, res);
+		autoprefix(compiledCss[req.urlParsed.pathname], req, res, cb);
 	});
 };
