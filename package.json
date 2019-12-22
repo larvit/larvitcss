@@ -35,7 +35,7 @@
   "private": false,
   "contributors": [],
   "devDependencies": {
-    "eslint": "5.16.0",
+    "eslint": "6.8.0",
     "freeport": "1.0.5",
     "larvitbase-www": "0.7.5",
     "larvitutils": "2.1.1",
