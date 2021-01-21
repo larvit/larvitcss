@@ -82,6 +82,15 @@ test('Get broken css returns css', function (t) {
 	});
 });
 
+test('Try to get unavailable css', function (t) {
+	request('http://localhost:' + port + '/test/nope.css', function (err, res, body) {
+		if (err) throw err;
+		t.deepEqual(res.statusCode, 404);
+		t.deepEqual(body, 'File not found');
+		t.end();
+	});
+});
+
 test('Stop webserver', function (t) {
 	app.stop(t.end);
 });

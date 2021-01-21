@@ -13,9 +13,11 @@ function serveCss(compiled, req, res) {
 	res.setHeader('Last-Modified', compiled.lastModified);
 	res.setHeader('Content-Type', 'text/css');
 	res.end(compiled.str);
+
+	req.finished = true;
 }
 
-function autoprefix(compiled, req, res) {
+function autoprefix(compiled, req, res, cb) {
 	postcss([autoprefixer]).process(compiled.str, { from: undefined })
 		.then(function (result) {
 			result.warnings().forEach(function (warn) {
@@ -23,12 +25,16 @@ function autoprefix(compiled, req, res) {
 			});
 			compiled.str = result.css;
 			serveCss(compiled, req, res);
+
+			cb();
 		})
 		.catch(function (err) {
 			if (err.name === 'CssSyntaxError') {
 				req.log.warn('larvitcss: controllers/css.js: autoprefix() - CSS syntax error, serving original file: ' + err);
 
-				return serveCss(compiled, req, res);
+				serveCss(compiled, req, res);
+
+				return cb();
 			}
 
 			throw err;
@@ -42,9 +48,8 @@ module.exports = function (req, res, cb) {
 	// Serve cached version
 	if (compiledCss[req.urlParsed.pathname] !== undefined && process.env.NODE_ENV !== 'development') {
 		req.log.debug('larvitcss: controllers/css.js: "' + req.urlParsed.pathname + ' found in cache, serving directly!');
-		autoprefix(compiledCss[req.urlParsed.pathname], req, res);
+		return autoprefix(compiledCss[req.urlParsed.pathname], req, res, cb);
 
-		return;
 	}
 
 	parsed = path.parse(req.urlParsed.pathname);
@@ -66,9 +71,9 @@ module.exports = function (req, res, cb) {
 		} else {
 			res.statusCode = 404;
 			res.end('File not found');
-		}
 
-		return;
+			return cb();
+		}
 	}
 
 	req.log.debug('larvitcss: controllers/css.js: resolved "' + req.urlParsed.pathname + '" to "' + srcPath + '", compile!');
@@ -83,6 +88,6 @@ module.exports = function (req, res, cb) {
 			str: result.css.toString(),
 			lastModified: new Date()
 		};
-		autoprefix(compiledCss[req.urlParsed.pathname], req, res);
+		autoprefix(compiledCss[req.urlParsed.pathname], req, res, cb);
 	});
 };
