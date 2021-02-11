@@ -40,7 +40,7 @@
     "larvitbase-www": "0.7.7",
     "larvitutils": "2.1.1",
     "tape": "4.11.0",
-    "request": "2.88.0"
+    "request": "2.88.2"
   },
   "maintainers": [
     {
