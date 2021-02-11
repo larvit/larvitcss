@@ -29,7 +29,7 @@
   "dependencies": {
     "autoprefixer": "9.6.0",
     "larvitfs": "2.3.1",
-    "postcss": "7.0.17",
+    "postcss": "7.0.35",
     "sass": "^1.16.1"
   },
   "private": false,
