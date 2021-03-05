@@ -27,7 +27,7 @@
   "homepage": "https://github.com/larvit/larvitcss#readme",
   "readmeFilename": "README.md",
   "dependencies": {
-    "autoprefixer": "9.6.0",
+    "autoprefixer": "10.2.5",
     "larvitfs": "2.3.1",
     "postcss": "7.0.17",
     "sass": "^1.16.1"
