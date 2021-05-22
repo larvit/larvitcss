@@ -46,10 +46,10 @@ module.exports = function (req, res, cb) {
 	let parsed;
 
 	// Serve cached version
-	if (compiledCss[req.urlParsed.pathname] !== undefined && process.env.NODE_ENV !== 'development') {
+	if (compiledCss[req.urlParsed.pathname] !== undefined && !process.env.LARVITCSS_NO_CACHE) {
 		req.log.debug('larvitcss: controllers/css.js: "' + req.urlParsed.pathname + ' found in cache, serving directly!');
-		return autoprefix(compiledCss[req.urlParsed.pathname], req, res, cb);
 
+		return autoprefix(compiledCss[req.urlParsed.pathname], req, res, cb);
 	}
 
 	parsed = path.parse(req.urlParsed.pathname);
