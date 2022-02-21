@@ -67,7 +67,8 @@ module.exports = options => {
 				return notFoundController(req, res, cb);
 			} else {
 				res.statusCode = 404;
-				res.end('File not found');
+
+				return res.end('File not found');
 			}
 		}
 
