@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/larvit/larvitcss/actions/workflows/node.js.yml/badge.svg)](https://github.com/larvit/larvitcss/actions)
+[![Build Status](https://github.com/larvit/larvitcss/actions/workflows/actions.yml/badge.svg)](https://github.com/larvit/larvitcss/actions)
 
 
 # larvitcss
