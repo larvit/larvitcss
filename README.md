@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/larvit/larvitcss.svg?branch=master)](https://travis-ci.org/larvit/larvitcss) [![Dependencies](https://david-dm.org/larvit/larvitcss.svg)](https://david-dm.org/larvit/larvitcss.svg)
+[![Build Status](https://github.com/larvit/larvitcss/actions/workflows/node.js.yml/badge.svg)](https://github.com/larvit/larvitcss/actions)
+
 
 # larvitcss
 
@@ -14,19 +15,37 @@ npm i larvitcss;
 
 ## Usage
 
-In your start script file, make sure all routes to css files are routed to the css-controller.
-
-In the case of larvitbase, do something like this:
+For usage as middleware in for instance Express or larvitbase:
 
 ```javascript
-require('larvitbase')({
-	'customRoutes': [{
-		"regex": "\\.css$",
-		"controllerName": "css"
-	}]
-});
+const larvitcss = require('larvitcss');
+const { Log } = require('larvitutils');
+const express = require('express');
+const app = express();
+
+app.use(larvitcss({
+	log: new Log(), // Optional
+	basePath: 'my_path/public', // Optional, defaults to "public/" under current process path,
+	notFoundController: (req, res) => { // Optional, controller for file not found, default to setting 404 status code.
+		res.statusCode = 404;
+		res.end('File not found from special controller');
+	},
+}));
+
+```
+
+```javascript
+const larvitcss = require('larvitcss');
+const { Log } = require('larvitutils');
+const LBase = require('larvitbase');
+const lBase = new LBase({middlewares: [larvitcss()]});
+
 ```
 
 ## Development mode
 
-Set environment variable NODE_ENV to "development" to disable cache
+Set environment variable LARVITCSS_NO_CACHE to disable cache
+
+# Changelog
+## 0.6.0
+- Removed larvitfs functionality. basePath is not specified instead and larvitcss is used as a middleware.

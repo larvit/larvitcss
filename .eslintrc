@@ -1,7 +1,10 @@
 {
   "root": true,
+  "parserOptions": {
+    "ecmaVersion": 2017
+  },
   "env": {
-  "es6": true,
+    "es6": true,
     "mocha": true,
     "node": true
   },
@@ -10,8 +13,7 @@
     "array-bracket-spacing": ["error", "never"],
     "block-spacing": ["error", "always"],
     "brace-style": ["error", "1tbs", {"allowSingleLine": true}],
-    "capitalized-comments": ["error", "always", {"ignoreConsecutiveComments": true}],
-    "comma-dangle": ["error", "never"],
+    "comma-dangle": ["error", "always-multiline"],
     "comma-spacing": ["error", {"before": false, "after": true}],
     "comma-style": ["error", "last"],
     "computed-property-spacing": ["error", "never"],
@@ -33,7 +35,6 @@
     "multiline-ternary": ["error", "never"],
     "new-cap": ["error"],
     "new-parens": ["error"],
-    "newline-per-chained-call": ["error"],
     "no-dupe-args": ["error"],
     "no-dupe-keys": ["error"],
     "no-invalid-regexp": ["error"],
@@ -41,12 +42,14 @@
     "no-lonely-if": ["error"],
     "no-mixed-operators": ["error"],
     "no-mixed-requires": ["off"],
-    "no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
+    "no-mixed-spaces-and-tabs": ["error"],
+    "no-multi-spaces": ["error", { "ignoreEOLComments": false }],
     "no-multiple-empty-lines": ["error", {"max": 2, "maxEOF": 1, "maxBOF": 0}],
     "no-process-exit": ["off"],
     "no-redeclare": ["error"],
     "no-sequences": ["error"],
     "no-shadow": ["off"],
+    "no-tabs": ["error", { "allowIndentationTabs": true }],
     "no-trailing-spaces": ["error", {"ignoreComments": true}],
     "no-underscore-dangle": ["off"],
     "no-unexpected-multiline": ["error"],
@@ -58,12 +61,10 @@
     "no-whitespace-before-property": ["error"],
     "nonblock-statement-body-position": ["error", "beside"],
     "one-var": ["error", "never"],
-    "padded-blocks": ["error", "never"],
     "padding-line-between-statements": [
       "error",
       {"blankLine": "always", "prev": "*", "next": "return"},
-      {"blankLine": "always", "prev": ["const", "let"], "next": "*"},
-      {"blankLine": "any", "prev": ["const", "let"], "next": ["const", "let"]}
+      {"blankLine": "any", "prev": ["const", "let"], "next": "*"}
     ],
     "quote-props": ["error", "as-needed"],
     "quotes": ["error", "single"],

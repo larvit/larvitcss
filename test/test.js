@@ -1,96 +1,105 @@
 'use strict';
 
-const request = require('request');
-const lUtils = new (require('larvitutils'))();
-const test = require('tape');
+const { Log } = require('larvitutils');
 const App = require('larvitbase-www');
-const log = new lUtils.Log('warning');
+const axios = require('axios').default;
+const larvitcss = require('../index');
+const test = require('tape');
+
+const log = new Log('warning');
+
+axios.defaults.validateStatus = () => true; // Do not throw for any status codes
 
 let app;
 let port;
 
 process.cwd('..');
 
-test('Start webserver', function (t) {
+test('Start webserver', async t => {
 	require('freeport')(function (err, tmpPort) {
 		if (err) throw err;
 
 		port = tmpPort;
 
-		app	= new App({
+		app = new App({
 			baseOptions: { httpOptions: tmpPort},
 			log: log,
-			routerOptions: {
-				routes: [{
-					regex: '\\.css$',
-					controllerPath: 'css.js'
-				}]
-			}
 		});
-		app.middleware.splice(3, 0, function (req, res, cb) {
-			req.log = log;
-			cb();
-		});
+		app.middleware.splice(3, 0, larvitcss({
+			log,
+			basePath: __dirname + '/../public',
+		}));
 
 		app.start(t.end);
 	});
 });
 
-test('Test a basic, single SCSS file', function (t) {
-	request('http://localhost:' + port + '/test/foo.css', function (err, res, body) {
-		if (err) throw err;
-		t.equal(res.statusCode, 200);
-		t.deepEqual(res.headers['content-type'], 'text/css');
-		t.deepEqual(body, 'body{font:100% Helvetica,sans-serif;color:#333}');
-		t.end();
-	});
+test('Test a basic, single SCSS file', async t => {
+	const res = await axios('http://localhost:' + port + '/test/foo.css');
+	t.equal(res.status, 200);
+	t.deepEqual(res.headers['content-type'], 'text/css');
+	t.deepEqual(res.data, 'body{font:100% Helvetica,sans-serif;color:#333}');
 });
 
-test('Get the source for that SCSS file', function (t) {
-	request('http://localhost:' + port + '/test/foo.scss', function (err, res, body) {
-		if (err) throw err;
-		t.deepEqual(res.statusCode, 200);
-		t.deepEqual(res.headers['content-type'], 'text/x-scss; charset=UTF-8');
-		t.deepEqual(body, '$font-stack:    Helvetica, sans-serif;\n$primary-color: #333;\n\nbody {\n  font: 100% $font-stack;\n  color: $primary-color;\n}');
-		t.end();
-	});
+test('Get the source for that SCSS file', async t => {
+	const res = await axios('http://localhost:' + port + '/test/foo.scss');
+	t.deepEqual(res.status, 200);
+	t.deepEqual(res.headers['content-type'], 'text/x-scss; charset=UTF-8');
+	t.deepEqual(res.data, '$font-stack:    Helvetica, sans-serif;\n$primary-color: #333;\n\nbody {\n  font: 100% $font-stack;\n  color: $primary-color;\n}');
 });
 
-test('Get nested SCSS files', function (t) {
-	request('http://localhost:' + port + '/test/nested.css', function (err, res, body) {
-		if (err) throw err;
-		t.deepEqual(res.statusCode, 200);
-		t.deepEqual(res.headers['content-type'], 'text/css');
-		t.deepEqual(body, 'a{color:red}body{background:lime}');
-		t.end();
-	});
+test('Get nested SCSS files', async t => {
+	const res = await axios('http://localhost:' + port + '/test/nested.css');
+	t.deepEqual(res.status, 200);
+	t.deepEqual(res.headers['content-type'], 'text/css');
+	t.deepEqual(res.data, 'a{color:red}body{background:lime}');
 });
 
-test('Get uncompiled pre-css before compiled css', function (t) {
-	request('http://localhost:' + port + '/test/blubb.css', function (err, res, body) {
-		if (err) throw err;
-		t.deepEqual(body, 'a{font-decoration:none}');
-		t.end();
-	});
+test('Get uncompiled pre-css before compiled css', async t => {
+	const res = await axios('http://localhost:' + port + '/test/blubb.css');
+	t.deepEqual(res.data, 'a{font-decoration:none}');
 });
 
-test('Get broken css returns css', function (t) {
-	request('http://localhost:' + port + '/test/broken.css', function (err, res, body) {
-		if (err) throw err;
-		t.deepEqual(body, '.test { font;\n');
-		t.end();
-	});
+test('Get broken css returns css', async t => {
+	const res = await axios('http://localhost:' + port + '/test/broken.css');
+	t.deepEqual(res.data, '.test { font;\n');
 });
 
-test('Try to get unavailable css', function (t) {
-	request('http://localhost:' + port + '/test/nope.css', function (err, res, body) {
-		if (err) throw err;
-		t.deepEqual(res.statusCode, 404);
-		t.deepEqual(body, 'File not found');
-		t.end();
-	});
+test('Get SCSS with warning', async t => {
+	const res = await axios('http://localhost:' + port + '/test/warning.css');
+	t.deepEqual(res.status, 200);
+	t.deepEqual(res.data, 'a{font-size:1000px}');
 });
 
-test('Stop webserver', function (t) {
+test('Try to get unavailable css', async t => {
+	const res = await axios('http://localhost:' + port + '/test/nope.css');
+	t.deepEqual(res.status, 404);
+	t.deepEqual(res.data, 'File not found');
+});
+
+test('Request the same SCSS file twice, cache should be used (tested by coverage)', async t => {
+	await axios('http://localhost:' + port + '/test/foo.css');
+	const res = await axios('http://localhost:' + port + '/test/foo.css');
+	t.equal(res.status, 200);
+	t.deepEqual(res.headers['content-type'], 'text/css');
+	t.deepEqual(res.data, 'body{font:100% Helvetica,sans-serif;color:#333}');
+});
+
+test('Try to get unavailable css and handle in specific 404-middleware', async t => {
+	const orgMiddleware = app.middleware.splice(3, 1, larvitcss({ notFoundController: (req, res, cb) => {
+		res.statusCode = 410;
+		res.end('Gone!');
+		req.finished = true;
+		cb();
+	}}));
+
+	const res = await axios('http://localhost:' + port + '/test/nope.css');
+	t.deepEqual(res.status, 410);
+	t.deepEqual(res.data, 'Gone!');
+
+	app.middleware.splice(3, 1, orgMiddleware[0]);
+});
+
+test('Stop webserver', async t => {
 	app.stop(t.end);
 });

@@ -1,10 +1,17 @@
 {
   "name": "larvitcss",
-  "version": "0.5.7",
+  "version": "0.6.0",
   "description": "Used to compile, minify, autoprefix etc CSS to remove the need to precompile css",
   "main": "index.js",
+  "files": [
+    "*.js",
+    "controllers/**/*.js"
+  ],
   "scripts": {
-    "test": "tape test/*.js"
+    "lint": "eslint *.js test/*.js",
+    "test:unit": "tape ./test/*.js",
+    "coverage": "nyc npm run test:unit",
+    "test": "npm run lint && npm run coverage"
   },
   "repository": {
     "type": "git",
@@ -27,20 +34,20 @@
   "homepage": "https://github.com/larvit/larvitcss#readme",
   "readmeFilename": "README.md",
   "dependencies": {
-    "autoprefixer": "9.6.0",
-    "larvitfs": "2.3.1",
-    "postcss": "7.0.17",
-    "sass": "1.32.13"
+    "autoprefixer": "10.4.2",
+    "postcss": "8.4.6",
+    "sass": "1.49.8"
   },
   "private": false,
   "contributors": [],
   "devDependencies": {
-    "eslint": "5.16.0",
+    "axios": "0.26.0",
+    "eslint": "8.9.0",
     "freeport": "1.0.5",
-    "larvitbase-www": "0.7.7",
-    "larvitutils": "2.1.1",
-    "tape": "4.11.0",
-    "request": "2.88.0"
+    "larvitbase-www": "0.8.0",
+    "larvitutils": "5.0.0",
+    "nyc": "15.1.0",
+    "tape": "5.5.2"
   },
   "maintainers": [
     {

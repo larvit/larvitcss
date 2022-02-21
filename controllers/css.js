@@ -1,12 +1,11 @@
 'use strict';
 
 const autoprefixer = require('autoprefixer');
+const { Log } = require('larvitutils');
 const compiledCss = {};
 const postcss = require('postcss');
 const path = require('path');
 const sass = require('sass');
-const Lfs = require('larvitfs');
-const lfs = new Lfs();
 const fs = require('fs');
 
 function serveCss(compiled, req, res) {
@@ -17,77 +16,78 @@ function serveCss(compiled, req, res) {
 	req.finished = true;
 }
 
-function autoprefix(compiled, req, res, cb) {
-	postcss([autoprefixer]).process(compiled.str, { from: undefined })
-		.then(function (result) {
-			result.warnings().forEach(function (warn) {
-				req.log.warn('larvitcss: controllers/css.js: autoprefix() - Warning from postcss: ' + warn.toString());
-			});
-			compiled.str = result.css;
-			serveCss(compiled, req, res);
-
-			cb();
-		})
-		.catch(function (err) {
-			if (err.name === 'CssSyntaxError') {
-				req.log.warn('larvitcss: controllers/css.js: autoprefix() - CSS syntax error, serving original file: ' + err);
-
-				serveCss(compiled, req, res);
-
-				return cb();
-			}
-
-			throw err;
+async function autoprefix(compiled, req, res, log) {
+	try {
+		const result = await postcss([autoprefixer]).process(compiled.str, { from: undefined });
+		result.warnings().forEach(function (warn) {
+			log.warn('larvitcss: controllers/css.js: autoprefix() - Warning from postcss: ' + warn.toString());
 		});
+		compiled.str = result.css;
+
+		serveCss(compiled, req, res);
+	} catch (err) {
+		if (err.name === 'CssSyntaxError') {
+			log.warn('larvitcss: controllers/css.js: autoprefix() - CSS syntax error, serving original file: ' + err);
+
+			return serveCss(compiled, req, res);
+		}
+
+		throw err;
+	}
 }
 
-module.exports = function (req, res, cb) {
-	let srcPath;
-	let parsed;
+module.exports = options => {
+	const log = options.log || new Log();
+	const basePath = options.basePath || path.join(process.cwd(), '/public');
+	const notFoundController = options.notFoundController;
 
-	// Serve cached version
-	if (compiledCss[req.urlParsed.pathname] !== undefined && !process.env.LARVITCSS_NO_CACHE) {
-		req.log.debug('larvitcss: controllers/css.js: "' + req.urlParsed.pathname + ' found in cache, serving directly!');
+	return async (req, res, cb) => {
+		if (!RegExp('\\.css$').test(req.urlParsed.path)) return cb();
 
-		return autoprefix(compiledCss[req.urlParsed.pathname], req, res, cb);
-	}
+		// Serve cached version
+		if (compiledCss[req.urlParsed.pathname] !== undefined && !process.env.LARVITCSS_NO_CACHE) {
+			log.debug('larvitcss: controllers/css.js: "' + req.urlParsed.pathname + ' found in cache, serving directly!');
 
-	parsed = path.parse(req.urlParsed.pathname);
-
-	// Check for scss first
-	srcPath = lfs.getPathSync('public' + parsed.dir + '/' + parsed.name + '.scss');
-
-	// If scss does not exist, check if pre compiled css exists
-	if (srcPath === false) {
-		srcPath = lfs.getPathSync('public' + req.urlParsed.pathname);
-	}
-
-	// No suitable sources found, show 404
-	if (srcPath === false) {
-		let notFoundPath = lfs.getPathSync('controllers/404.js');
-
-		if (notFoundPath) {
-			require(notFoundPath).run(req, res, cb);
-		} else {
-			res.statusCode = 404;
-			res.end('File not found');
-
-			return cb();
+			return await autoprefix(compiledCss[req.urlParsed.pathname], req, res, log);
 		}
-	}
 
-	req.log.debug('larvitcss: controllers/css.js: resolved "' + req.urlParsed.pathname + '" to "' + srcPath + '", compile!');
+		const parsed = path.parse(req.urlParsed.pathname);
 
-	sass.render({file: srcPath, outputStyle: 'compressed'}, function (err, result) {
-		if (err) {
-			req.log.warn('larvitcss: controllers/css.js: Could not render ' + srcPath + ' err: ' + err.message);
+		// Check for scss first
+		let srcPath = path.join(basePath, parsed.dir, `${parsed.name}.scss`);
+
+		// If scss does not exist, check if pre compiled css exists
+		if (!fs.existsSync(srcPath)) {
+			srcPath = path.join(basePath, req.urlParsed.pathname);
+		}
+
+		// No suitable sources found, show 404
+		if (!fs.existsSync(srcPath)) {
+			if (notFoundController) {
+				return notFoundController(req, res, cb);
+			} else {
+				res.statusCode = 404;
+				res.end('File not found');
+			}
+		}
+
+		log.debug('larvitcss: controllers/css.js: resolved "' + req.urlParsed.pathname + '" to "' + srcPath + '", compile!');
+
+		let result;
+		try {
+			result = await sass.compileAsync(srcPath, {style: 'compressed'});
+		} catch (err) {
+			log.warn('larvitcss: controllers/css.js: Could not render ' + srcPath + ' err: ' + err.message);
 			result = {css: fs.readFileSync(srcPath)};
 		}
 
 		compiledCss[req.urlParsed.pathname] = {
 			str: result.css.toString(),
-			lastModified: new Date()
+			lastModified: new Date(),
 		};
-		autoprefix(compiledCss[req.urlParsed.pathname], req, res, cb);
-	});
+
+		await autoprefix(compiledCss[req.urlParsed.pathname], req, res, log);
+
+		cb();
+	};
 };
