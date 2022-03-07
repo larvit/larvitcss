@@ -35,7 +35,7 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "autoprefixer": "10.4.2",
-    "postcss": "8.4.7",
+    "postcss": "8.4.8",
     "sass": "1.49.9"
   },
   "private": false,
