@@ -45,7 +45,7 @@
     "eslint": "8.11.0",
     "freeport": "1.0.5",
     "larvitbase-www": "0.8.0",
-    "larvitutils": "5.0.0",
+    "larvitutils": "5.0.2",
     "nyc": "15.1.0",
     "tape": "5.5.2"
   },
