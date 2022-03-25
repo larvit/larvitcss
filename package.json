@@ -42,7 +42,7 @@
   "contributors": [],
   "devDependencies": {
     "axios": "0.26.1",
-    "eslint": "8.11.0",
+    "eslint": "8.12.0",
     "freeport": "1.0.5",
     "larvitbase-www": "0.8.0",
     "larvitutils": "5.0.2",
