@@ -42,7 +42,7 @@ module.exports = options => {
 	const notFoundController = options.notFoundController;
 
 	return async (req, res, cb) => {
-		if (!RegExp('\\.css$').test(req.urlParsed.path)) return cb();
+		if (!RegExp('\\.css$').test(req.urlParsed.pathname)) return cb();
 
 		// Serve cached version
 		if (compiledCss[req.urlParsed.pathname] !== undefined && !process.env.LARVITCSS_NO_CACHE) {
