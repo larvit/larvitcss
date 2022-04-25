@@ -15,7 +15,7 @@ let port;
 
 process.cwd('..');
 
-test('Start webserver', async t => {
+test('Start webserver', t => {
 	require('freeport')(function (err, tmpPort) {
 		if (err) throw err;
 
@@ -100,6 +100,21 @@ test('Try to get unavailable css and handle in specific 404-middleware', async t
 	app.middleware.splice(3, 1, orgMiddleware[0]);
 });
 
-test('Stop webserver', async t => {
-	app.stop(t.end);
+test('Verify that req.finished is set when getting unavailable css', t => {
+	app.middleware.splice(4, 0, (req, res, cb) => {
+		t.equal(req.finished, true);
+		t.equal(res.statusCode, 404);
+
+		app.middleware.splice(4, 1);
+
+		cb();
+	});
+
+	axios('http://localhost:' + port + '/test/nope.css').then(() => {
+		t.end();
+	});
+});
+
+test('Stop webserver', t => {
+	app.stop(t.end());
 });

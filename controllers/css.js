@@ -48,7 +48,9 @@ module.exports = options => {
 		if (compiledCss[req.urlParsed.pathname] !== undefined && !process.env.LARVITCSS_NO_CACHE) {
 			log.debug('larvitcss: controllers/css.js: "' + req.urlParsed.pathname + ' found in cache, serving directly!');
 
-			return await autoprefix(compiledCss[req.urlParsed.pathname], req, res, log);
+			await autoprefix(compiledCss[req.urlParsed.pathname], req, res, log);
+
+			return cb();
 		}
 
 		const parsed = path.parse(req.urlParsed.pathname);
@@ -67,8 +69,10 @@ module.exports = options => {
 				return notFoundController(req, res, cb);
 			} else {
 				res.statusCode = 404;
+				req.finished = true;
+				res.end('File not found');
 
-				return res.end('File not found');
+				return cb();
 			}
 		}
 
