@@ -80,7 +80,7 @@ module.exports = options => {
 
 		let result;
 		try {
-			result = await sass.compileAsync(srcPath, {style: 'compressed'});
+			result = sass.compile(srcPath, {style: 'compressed'});
 		} catch (err) {
 			log.warn('larvitcss: controllers/css.js: Could not render ' + srcPath + ' err: ' + err.message);
 			result = {css: fs.readFileSync(srcPath)};
