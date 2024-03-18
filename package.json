@@ -1,6 +1,6 @@
 {
   "name": "larvitcss",
-  "version": "0.7.88",
+  "version": "0.7.89",
   "description": "Used to compile, minify, autoprefix etc CSS to remove the need to precompile css",
   "main": "index.js",
   "files": [
@@ -35,17 +35,17 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "autoprefixer": "10.4.18",
-    "postcss": "8.4.35",
-    "sass": "1.71.1"
+    "postcss": "8.4.36",
+    "sass": "1.72.0"
   },
   "private": false,
   "contributors": [],
   "devDependencies": {
-    "axios": "1.6.7",
+    "axios": "1.6.8",
     "eslint": "8.57.0",
     "freeport": "1.0.5",
-    "larvitbase-www": "0.8.62",
-    "larvitutils": "5.1.80",
+    "larvitbase-www": "0.8.63",
+    "larvitutils": "5.1.81",
     "nyc": "15.1.0",
     "tape": "5.7.5"
   },
