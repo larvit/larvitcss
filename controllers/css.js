@@ -16,20 +16,16 @@ function serveCss(compiled, req, res) {
 	req.finished = true;
 }
 
-async function autoprefix(compiled, req, res, log) {
+async function autoprefix(compiled, log) {
 	try {
 		const result = await postcss([autoprefixer]).process(compiled.str, { from: undefined });
 		result.warnings().forEach(function (warn) {
 			log.warn('larvitcss: controllers/css.js: autoprefix() - Warning from postcss: ' + warn.toString());
 		});
 		compiled.str = result.css;
-
-		serveCss(compiled, req, res);
 	} catch (err) {
 		if (err.name === 'CssSyntaxError') {
 			log.warn('larvitcss: controllers/css.js: autoprefix() - CSS syntax error, serving original file: ' + err);
-
-			return serveCss(compiled, req, res);
 		}
 
 		throw err;
@@ -48,7 +44,7 @@ module.exports = options => {
 		if (compiledCss[req.urlParsed.pathname] !== undefined && !process.env.LARVITCSS_NO_CACHE) {
 			log.debug('larvitcss: controllers/css.js: "' + req.urlParsed.pathname + ' found in cache, serving directly!');
 
-			await autoprefix(compiledCss[req.urlParsed.pathname], req, res, log);
+			serveCss(compiledCss[req.urlParsed.pathname], req, res);
 
 			return cb();
 		}
@@ -91,7 +87,9 @@ module.exports = options => {
 			lastModified: new Date(),
 		};
 
-		await autoprefix(compiledCss[req.urlParsed.pathname], req, res, log);
+		await autoprefix(compiledCss[req.urlParsed.pathname], log);
+
+		serveCss(compiledCss[req.urlParsed.pathname], req, res);
 
 		cb();
 	};

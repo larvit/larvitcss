@@ -1,6 +1,6 @@
 {
   "name": "larvitcss",
-  "version": "0.7.113",
+  "version": "0.7.114",
   "description": "Used to compile, minify, autoprefix etc CSS to remove the need to precompile css",
   "main": "index.js",
   "files": [
