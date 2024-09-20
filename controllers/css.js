@@ -16,22 +16,6 @@ function serveCss(compiled, req, res) {
 	req.finished = true;
 }
 
-async function autoprefix(compiled, log) {
-	try {
-		const result = await postcss([autoprefixer]).process(compiled.str, { from: undefined });
-		result.warnings().forEach(function (warn) {
-			log.warn('larvitcss: controllers/css.js: autoprefix() - Warning from postcss: ' + warn.toString());
-		});
-		compiled.str = result.css;
-	} catch (err) {
-		if (err.name === 'CssSyntaxError') {
-			log.warn('larvitcss: controllers/css.js: autoprefix() - CSS syntax error, serving original file: ' + err);
-		}
-
-		throw err;
-	}
-}
-
 module.exports = options => {
 	const log = options.log || new Log();
 	const basePath = options.basePath || path.join(process.cwd(), '/public');
@@ -87,7 +71,17 @@ module.exports = options => {
 			lastModified: new Date(),
 		};
 
-		await autoprefix(compiledCss[req.urlParsed.pathname], log);
+		try {
+			const result = await postcss([autoprefixer]).process(compiledCss[req.urlParsed.pathname].str, { from: undefined });
+			result.warnings().forEach(function (warn) {
+				log.warn('larvitcss: controllers/css.js: autoprefix() - Warning from postcss: ' + warn.toString());
+			});
+			compiledCss[req.urlParsed.pathname].str = result.css;
+		} catch (err) {
+			if (err.name === 'CssSyntaxError') {
+				log.warn('larvitcss: controllers/css.js: autoprefix() - CSS syntax error, serving original file: ' + err);
+			}
+		}
 
 		serveCss(compiledCss[req.urlParsed.pathname], req, res);
 
