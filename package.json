@@ -1,6 +1,6 @@
 {
   "name": "larvitcss",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Used to compile, minify, autoprefix etc CSS to remove the need to precompile css",
   "main": "index.js",
   "files": [
@@ -36,7 +36,7 @@
   "dependencies": {
     "autoprefixer": "10.4.21",
     "postcss": "8.5.4",
-    "sass": "1.79.6"
+    "sass": "1.89.1"
   },
   "private": false,
   "contributors": [],
