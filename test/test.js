@@ -44,7 +44,7 @@ test('Test a basic, single SCSS file', async t => {
 test('Get the source for that SCSS file', async t => {
 	const res = await axios('http://localhost:' + port + '/test/foo.scss');
 	t.deepEqual(res.status, 200);
-	t.deepEqual(res.headers['content-type'], 'text/x-scss; charset=UTF-8');
+	t.deepEqual(res.headers['content-type'], 'text/x-scss; charset=utf-8');
 	t.deepEqual(res.data, '$font-stack:    Helvetica, sans-serif;\n$primary-color: #333;\n\nbody {\n  font: 100% $font-stack;\n  color: $primary-color;\n}');
 });
 
@@ -113,6 +113,37 @@ test('Verify that req.finished is set when getting unavailable css', t => {
 	axios('http://localhost:' + port + '/test/nope.css').then(() => {
 		t.end();
 	});
+});
+
+test('Stop webserver', t => {
+	app.stop(t.end());
+});
+
+test('Start webserver, but with Sass options', t => {
+	require('freeport')(function (err, tmpPort) {
+		if (err) throw err;
+
+		port = tmpPort;
+
+		app = new App({
+			baseOptions: { httpOptions: tmpPort},
+			log: log,
+		});
+		app.middleware.splice(3, 0, larvitcss({
+			log,
+			basePath: __dirname + '/../public',
+			sassOptions: { style: 'expanded' },
+		}));
+
+		app.start(t.end);
+	});
+});
+
+test('Test a basic, single SCSS file, but with Sass options', async t => {
+	const res = await axios('http://localhost:' + port + '/test/expanded.css');
+	t.equal(res.status, 200);
+	t.deepEqual(res.headers['content-type'], 'text/css');
+	t.deepEqual(res.data, 'body {\n  color: #666;\n}');
 });
 
 test('Stop webserver', t => {
